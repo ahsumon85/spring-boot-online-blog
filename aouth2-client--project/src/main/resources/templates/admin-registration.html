@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Update Form</title>
+<th:block th:include="layout/header"></th:block>
+
+</head>
+
+
+
+
+
+<body style="background-color: #DADBDB">
+
+
+	<div class="container" >
+		<div>
+
+
+			<form th:action="@{/create/admin}" th:object="${adminDTO}"
+				method="post" class="form-horizontal" enctype="multipart/form-data">
+				<br /> <br />
+				<div class="col-md-4 col-md-offset-4 "
+					style="background-color: silver; border-radius: 15px; margin-top: 10%">
+					<div class="col-md-12 ">
+
+						<h2> Admin Sign Up Form</h2>
+						<h4 class="text-danger" th:utext="${message}"></h4>
+						<br />
+						<div class="form-group">
+							<div class="form-group">
+								<div class="col-sm-12">
+									<input type="text" th:field="*{username}"
+										placeholder="Enter user name " required="required"
+										class="form-control" />
+								</div>
+							</div>
+
+							<div class="form-group">
+								<div class="col-sm-12">
+									<input type="text" th:field="*{password}" required="required"
+										placeholder="Enter password" class="form-control" />
+								</div>
+								
+							</div>
+							<div class="form-group">
+								<div class="col-sm-12">
+									<button type="submit" class="btn btn-primary btn-block">Registration
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+
+</body>
+</html>

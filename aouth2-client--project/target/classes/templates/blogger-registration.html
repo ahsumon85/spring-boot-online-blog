@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Registration Form</title>
+<link rel="stylesheet" type="text/css" th:href="@{/css/registration.css}" />
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<style type="text/css">
+body, html {
+	height: 100%;
+}
+
+.bg {
+	/* The image used */
+	/* Full height */
+	height: 100%;
+	/* Center and scale the image nicely */
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+</style>
+</head>
+
+
+<body style="background-color: teal;">
+	<div class="container" >
+		<div>
+
+
+			<form th:action="@{/registration}" th:object="${bloggerDTO}"
+				method="post" class="form-horizontal" enctype="multipart/form-data">
+				<br /> <br />
+				<div class="col-md-4 col-md-offset-4 "
+					style="background-color: silver; border-radius: 15px; margin-top: 10%">
+					<div class="col-md-12 ">
+
+						<h2> Blogger Sign Up Form</h2>
+						<h4 class="text-danger" th:utext="${message}"></h4>
+						<br />
+						<div class="form-group">
+							<div class="form-group">
+								<div class="col-sm-12">
+									<input type="text" th:field="*{username}"
+										placeholder="Enter user name " 
+										class="form-control" />
+								</div>
+							</div>
+
+							<div class="form-group">
+								<div class="col-sm-12">
+									<input type="text" th:field="*{password}" required="required"
+										placeholder="Enter password" class="form-control" />
+								</div>
+							
+							</div>
+							<div class="form-group">
+								<div class="col-sm-12">
+									<button type="submit" class="btn btn-primary btn-block">Registration
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+
+
+</body>
+</html>
