@@ -62,9 +62,6 @@ public class BloggerPostController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 	
-	
-	
-	
 	@PreAuthorize("hasRole('ROLE_BLOGGER') or hasRole('ROLE_ADMIN')")
 	@GetMapping(value = "/find/post")
 	public ResponseEntity<List<BlogDTO>> findAllApproedBloggerPost() {

@@ -4,6 +4,8 @@ import java.util.Date;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "blog")
@@ -14,21 +16,21 @@ public class Blog {
 	@Column(name = "blog_id")
 	private Long blogId;
 
-//	@NotNull(message = "Content can not be null!")
-	@Column(name = "content", columnDefinition = "TEXT"/* , nullable = false */)
+	@NotNull(message = "Content can not be null!")
+	@Column(name = "content", columnDefinition = "TEXT")
 	private String content;
 
-//	@Min(value = 0, message = "active status field must be input 0 or 1")
+	@Min(value = 0, message = "active status field must be input 0 or 1")
 	@Max(value = 1, message = "active status field must be input 0 or 1")
-	@Column(name = "active_status"/* , nullable = false, length = 1 */)
+	@Column(name = "active_status", nullable = false, length = 1)
 	private Integer activeStatus;
 
-//	@Min(value = 0, message = "active status field must be input 0 or 1")
+	@Min(value = 0, message = "active status field must be input 0 or 1")
 	@Max(value = 1, message = "active status field must be input 0 or 1")
-	@Column(name = "publish"/* , nullable = false, length = 1 */)
+	@Column(name = "publish", nullable = false, length = 1 )
 	private Integer publish;
 
-	@Column(name = "create_date"/* , updatable = false, nullable = false */)
+	@Column(name = "create_date" , updatable = false, nullable = false )
 	private Date createDate = new Date();
 
 	@ManyToOne (fetch = FetchType.LAZY) 

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.authorization.admin.service.AdminPostService;
@@ -55,8 +56,8 @@ public class AdminPostController {
 	}
 
 	@PreAuthorize("hasRole('ADMIN')")
-	@DeleteMapping(value = "/delete{blogId}")
-	public ResponseEntity<BaseResponse> deleteBlogPostByBlogId(@Valid @NotNull(message = "blogId must not be null") @PathVariable("blogId") Long blogId) {
+	@DeleteMapping(value = "/delete")
+	public ResponseEntity<BaseResponse> deleteBlogPostByBlogId(@Valid @NotNull(message = "blogId must not be null") @RequestParam Long blogId) {
 		BaseResponse response = amAdminPostService.deleteBlogPostByBlogId(blogId);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}

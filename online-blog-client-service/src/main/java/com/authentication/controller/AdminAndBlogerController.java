@@ -12,15 +12,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.authentication.loginUsers.LoginUserCredentialsProvider;
-import com.authentication.service.UserService;
+import com.authentication.service.AdminAndBloggerService;
 import com.authentication.user.model.BlogDTO;
 import com.authentication.user.model.UsersDTO;
 
 @Controller
-public class UserController {
+public class AdminAndBlogerController {
 
 	@Autowired
-	private UserService userService;
+	private AdminAndBloggerService userService;
 	
 	@GetMapping(value = "/admin/home")
 	public ModelAndView home() {
@@ -110,8 +110,6 @@ public class UserController {
 		return modelAndView;
 	}
 	
-	
-	
 	@GetMapping(value = "/blogger/post")
 	public ModelAndView findBloggerAllPost() {
 		ModelAndView modelAndView = new ModelAndView();
@@ -143,7 +141,23 @@ public class UserController {
 		return "redirect:/pending/post";
 	}
 	
+	@GetMapping(value = "/delete/blogger/post")
+	public String deleteOtherBloggerPost(@NotNull @RequestParam Long blogId) {
+		userService.deleteOtherBloggerPost(blogId);
+		return "redirect:/blogger/post";
+	}
 	
+	@GetMapping(value = "/like/blogger/post")
+	public String likeBloggerPost(@NotNull @RequestParam Long blogId) {
+		userService.likeBloggerPost(blogId);
+		return "redirect:/blogger/post";
+	}
 	
+	@GetMapping(value = "/dislike/blogger/post")
+	public String dislikeBloggerPost(@NotNull @RequestParam Long blogId) {
+		userService.dislikeBloggerPost(blogId);
+		return "redirect:/blogger/post";
+	}
 
+	
 }

@@ -18,7 +18,7 @@ public class BlogDTO {
 
 	private String createDate;
 
-	private LikeAndDislike bloggerLikeDislikes;
+	private LikeAndDislikeDTO bloggerLikeDislikes;
 
 	private List<CommentDTO> bloggerComment;
 
@@ -64,11 +64,11 @@ public class BlogDTO {
 		this.createDate = createDate;
 	}
 
-	public LikeAndDislike getBloggerLikeDislikes() {
+	public LikeAndDislikeDTO getBloggerLikeDislikes() {
 		return bloggerLikeDislikes;
 	}
 
-	public void setBloggerLikeDislikes(LikeAndDislike bloggerLikeDislikes) {
+	public void setBloggerLikeDislikes(LikeAndDislikeDTO bloggerLikeDislikes) {
 		this.bloggerLikeDislikes = bloggerLikeDislikes;
 	}
 

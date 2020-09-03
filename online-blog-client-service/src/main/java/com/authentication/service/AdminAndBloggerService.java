@@ -17,6 +17,7 @@ import com.authentication.common.StaticValueProvider;
 import com.authentication.common.StatusValue;
 import com.authentication.loginUsers.LoginUserCredentialsProvider;
 import com.authentication.user.model.BlogDTO;
+import com.authentication.user.model.LikeAndDislikeDTO;
 import com.authentication.user.model.UsersDTO;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
@@ -25,7 +26,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
  * @author Ahasan Habib
  */
 @Service
-public class UserService {
+public class AdminAndBloggerService {
 
 	@Autowired
 	private LoginUserCredentialsProvider token;
@@ -63,7 +64,7 @@ public class UserService {
 	public void approvedFendingUser(Long userId) {
 
 		try {
-			ApiConsume.exposeStringurl(StaticValueProvider.BASE_URL + StaticValueProvider.LOGIN_USER_URI + "/approve/deactivate?userId=" + userId
+			ApiConsume.exposeStringurlByPost(StaticValueProvider.BASE_URL + StaticValueProvider.LOGIN_USER_URI + "/approve/deactivate?userId=" + userId
 					+ "&active=true&access_token=" + token.provideAccessToken());
 		} catch (UnirestException e) {
 			e.printStackTrace();
@@ -73,7 +74,7 @@ public class UserService {
 	public void deactivateApprovedUser(Long userId) {
 
 		try {
-			ApiConsume.exposeStringurl(StaticValueProvider.BASE_URL + StaticValueProvider.LOGIN_USER_URI + "/approve/deactivate?userId=" + userId
+			ApiConsume.exposeStringurlByPost(StaticValueProvider.BASE_URL + StaticValueProvider.LOGIN_USER_URI + "/approve/deactivate?userId=" + userId
 					+ "&active=false&access_token=" + token.provideAccessToken());
 		} catch (UnirestException e) {
 			e.printStackTrace();
@@ -89,7 +90,16 @@ public class UserService {
 	}
 
 	public List<BlogDTO> findBloggerAllPost() {
-		return ApiConsume.consumeBlogDTO(StaticValueProvider.LOGIN_BLOGGER_URI,"/find/post?access_token=" + token.provideAccessToken());
+	List<BlogDTO>  blogDTOs=  ApiConsume.consumeBlogDTO(StaticValueProvider.LOGIN_BLOGGER_URI,"/find/post?access_token=" + token.provideAccessToken());
+	blogDTOs.stream().forEach(like ->{
+		if(like.getBloggerLikeDislikes() == null) {
+			LikeAndDislikeDTO likeAndDislikeDTO = new LikeAndDislikeDTO();
+			likeAndDislikeDTO.setLikes(0);
+			likeAndDislikeDTO.setDislikes(0);
+			like.setBloggerLikeDislikes(likeAndDislikeDTO);
+		}
+	});
+	 return blogDTOs;
 	}
 
 	public List<BlogDTO> findAllBloggerPendingPost() {
@@ -103,4 +113,42 @@ public class UserService {
 		blogDTO.setPublish(StatusValue.ACTIVE.getValue());
 		ApiConsume.exposeBlogDTOWithPatch(StaticValueProvider.LOGIN_ADMIN_URI,"/approve?access_token=" + token.provideAccessToken(), blogDTO);
 	}
+
+	public void deleteOtherBloggerPost(Long blogId) {
+		try {
+			ApiConsume.exposeStringurlByDelete(StaticValueProvider.BASE_URL + StaticValueProvider.LOGIN_ADMIN_URI + 
+					"/delete?blogId="+ blogId + "&access_token=" + token.provideAccessToken());
+		} catch (UnirestException e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+	public void likeBloggerPost(Long blogId) {
+		LikeAndDislikeDTO likeAndDislikeDTO = new LikeAndDislikeDTO();
+		BlogDTO blogDTO = new BlogDTO();
+		likeAndDislikeDTO.setLikes(1);
+		blogDTO.setBlogId(blogId);
+		likeAndDislikeDTO.setBlog(blogDTO);
+		ApiConsume.exposeLikeDislikeDTO(StaticValueProvider.LOGIN_BLOGGER_URI, "/like/post?access_token=" + token.provideAccessToken(), likeAndDislikeDTO);
+		
+	}
+
+	public void dislikeBloggerPost(Long blogId) {
+		LikeAndDislikeDTO likeAndDislikeDTO = new LikeAndDislikeDTO();
+		BlogDTO blogDTO = new BlogDTO();
+		likeAndDislikeDTO.setDislikes(1);
+		blogDTO.setBlogId(blogId);
+		likeAndDislikeDTO.setBlog(blogDTO);
+		ApiConsume.exposeLikeDislikeDTO(StaticValueProvider.LOGIN_BLOGGER_URI, "/like/post?access_token=" + token.provideAccessToken(), likeAndDislikeDTO);
+		
+		
+	}
+
+
+
+
+
+
+
 }

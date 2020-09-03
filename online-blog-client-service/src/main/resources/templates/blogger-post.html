@@ -30,13 +30,13 @@
 				th:action="@{/blog/post}" enctype="multipart/form-data">
 				<br />
 				<div class="panel-heading" sec:authorize="!hasAuthority('ROLE_ADMIN')">
-					<div class="col-md-10">
+					<div class="col-md-12">
 						<textarea class="form-control" th:field="*{content}" placeholder="Enter your post....."></textarea>
 					</div>
 				</div>
 				
 				<div class="panel-heading" style="margin-top: 4%" sec:authorize="!hasAuthority('ROLE_ADMIN')">
-					<div class="col-md-10 ">
+					<div class="col-md-12 ">
 							<button type="submit" class="btn btn-primary btn-block">submit Article
 								</button>
 					</div>
@@ -62,7 +62,10 @@
 					<tfoot>
 							<tr style="background: silver;">
 								<td>
-									<a th:href="@{/approved/user(userId=${value.blogId})}" class="btn btn-primary col-md-offset-11">Delete<i class="fas fa-user-edit ml-2"></i></a>
+									<a th:href="@{/like/blogger/post(blogId=${value.blogId})}"  class="btn btn-primary" style="float: left;" >Like     <i th:text="${value.bloggerLikeDislikes.likes}" class="fas fa-user-add "></i></a>
+									<a th:href="@{/dislike/blogger/post(blogId=${value.blogId})}"  class="btn btn-primary" style="float: left; margin-left: 1%" >Dislike     <i th:text="${value.bloggerLikeDislikes.dislikes}" class="fas fa-user-add "></i></a>
+									<a class="btn btn-primary" style="float: left; margin-left: 3%" >Comment <i class="fas fa-user-add "></i></a>
+									<a th:href="@{/delete/blogger/post(blogId=${value.blogId})}" class="btn btn-primary col-md-offset-9" style="float: right;" sec:authorize="hasAuthority('ROLE_ADMIN')">Delete<i class="fas fa-user-edit ml-2"></i></a>
 								</td>
 							</tr>
 					</tfoot>

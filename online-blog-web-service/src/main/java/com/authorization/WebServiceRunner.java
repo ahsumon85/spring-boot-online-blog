@@ -15,10 +15,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 
 @SpringBootApplication
-public class ApplicationRunner {
+public class WebServiceRunner {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ApplicationRunner.class, args);
+		SpringApplication.run(WebServiceRunner.class, args);
 	}
 
 }

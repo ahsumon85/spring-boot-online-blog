@@ -13,6 +13,7 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 import com.authentication.user.model.BlogDTO;
+import com.authentication.user.model.LikeAndDislikeDTO;
 import com.authentication.user.model.UserRolesDTO;
 import com.authentication.user.model.UsersDTO;
 import com.mashape.unirest.http.HttpResponse;
@@ -45,9 +46,13 @@ public class ApiConsume {
 		return response.getBody().getUsername() != null ? response.getBody() : null;
 	}
 
-	public static void exposeStringurl(String uri) throws UnirestException {
-		HttpResponse<String> response = Unirest.post(uri).header("cache-control", "no-cache")
+	public static void exposeStringurlByPost(String uri) throws UnirestException {
+		Unirest.post(uri).header("cache-control", "no-cache")
 				.header("postman-token", "a1c3472b-16c0-0c41-2d8d-d1f429be1956").asString();
+	}
+
+	public static void exposeStringurlByDelete(String uri) throws UnirestException {
+		Unirest.delete(uri).asString();
 	}
 
 	public static List<UsersDTO> consumeLoginUsersInfoList(String uri, String uriExtension) {
@@ -72,8 +77,15 @@ public class ApiConsume {
 		return Arrays.asList(response.getBody());
 	}
 	
+	public static void exposeLikeDislikeDTO(String uri, String uriExtension, LikeAndDislikeDTO likeAndDislikeDTO) {
+		RestTemplate template = new RestTemplate();
+		HttpEntity<LikeAndDislikeDTO> request = new HttpEntity<>(likeAndDislikeDTO);
+		String url = StaticValueProvider.BASE_URL + uri + uriExtension;
+		template.exchange(url, HttpMethod.POST, request, LikeAndDislikeDTO.class);
+	}
+
 	public static void exposeBlogDTOWithPatch(String uri, String uriExtension, BlogDTO blogDTO) {
-		
+
 		HttpHeaders headers = new HttpHeaders();
 		MediaType mediaType = new MediaType("application", "merge-patch+json");
 		headers.setContentType(mediaType);
@@ -83,6 +95,6 @@ public class ApiConsume {
 		RestTemplate restTemplate = new RestTemplate(requestFactory);
 		String url = StaticValueProvider.BASE_URL + uri + uriExtension;
 		restTemplate.exchange(url, HttpMethod.PATCH, request, Void.class);
-		
+
 	}
 }
