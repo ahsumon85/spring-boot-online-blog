@@ -1,0 +1,308 @@
+{
+	"info": {
+		"_postman_id": "a71962ad-74cd-4110-8f46-2f5d222a85b8",
+		"name": "online-blog",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Access Token",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"username": "test-client",
+						"password": "123"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "123",
+							"type": "text"
+						},
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						}
+					]
+				},
+				"url": "http://localhost:8086/oauth/token"
+			},
+			"response": []
+		},
+		{
+			"name": "user create",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "e225d42d-fe50-43f7-ad10-2d132e5fee07"
+					}
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"Admin\",\n    \"password\": \"123\",\n    \"type\": \"Admin\",\n    \"roles\" : [\"ADMIN\",\"USER\"]\n}"
+				},
+				"url": "http://localhost:8086/user/create"
+			},
+			"response": []
+		},
+		{
+			"name": "find all inactive users",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "e225d42d-fe50-43f7-ad10-2d132e5fee07"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:8086/user/find/inactive/users"
+			},
+			"response": []
+		},
+		{
+			"name": "find active users",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "e225d42d-fe50-43f7-ad10-2d132e5fee07"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:8086/user/find/active/users"
+			},
+			"response": []
+		},
+		{
+			"name": "post create by blogger",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "296f68c4-7847-4c7b-9c10-0e7ae42e8bd8"
+					}
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \n    \"content\": \"test content\",\n    \"activeStatus\": 0,\n    \"publish\": 0,\n    \"users\": {\n        \"id\": 1\n    }\n\n\n}"
+				},
+				"url": "http://localhost:8086/blogger/post/create"
+			},
+			"response": []
+		},
+		{
+			"name": "find pending post by admin",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "296f68c4-7847-4c7b-9c10-0e7ae42e8bd8"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:8086/admin/pending/post"
+			},
+			"response": []
+		},
+		{
+			"name": "approved blogger post by admin",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "296f68c4-7847-4c7b-9c10-0e7ae42e8bd8"
+					}
+				},
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"blogId\": 1,\n    \"activeStatus\": 1,\n    \"publish\": 1\n}"
+				},
+				"url": "http://localhost:8086/admin/approve"
+			},
+			"response": []
+		},
+		{
+			"name": "find approved post by admin",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "296f68c4-7847-4c7b-9c10-0e7ae42e8bd8"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:8086/admin/approved/post"
+			},
+			"response": []
+		},
+		{
+			"name": "find approved post by blogger",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "e225d42d-fe50-43f7-ad10-2d132e5fee07"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:8086/blogger/find/post"
+			},
+			"response": []
+		},
+		{
+			"name": "active pending user by admin",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "e225d42d-fe50-43f7-ad10-2d132e5fee07"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8086/user/user/active?userId=2&active=false",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8086",
+					"path": [
+						"user",
+						"user",
+						"active"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "2"
+						},
+						{
+							"key": "active",
+							"value": "false"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "like post by blogger",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "296f68c4-7847-4c7b-9c10-0e7ae42e8bd8"
+					}
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"likes\": 1,\n    \"blog\": {\n        \"blogId\" : 1\n    }\n}"
+				},
+				"url": "http://localhost:8086/blogger/like/post"
+			},
+			"response": []
+		},
+		{
+			"name": "dislike blogger post",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "296f68c4-7847-4c7b-9c10-0e7ae42e8bd8"
+					}
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"dislikes\": 1,\n    \"blog\": {\n        \"blogId\" : 1\n    }\n}"
+				},
+				"url": "http://localhost:8086/blogger/like/post"
+			},
+			"response": []
+		},
+		{
+			"name": "comment post by blogger",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "296f68c4-7847-4c7b-9c10-0e7ae42e8bd8"
+					}
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"comment\": \"Test comment\",\n    \"blog\":{\n        \"blogId\": 1\n    },\n    \"users\":{\n        \"id\": 1\n    }\n}"
+				},
+				"url": "http://localhost:8086/blogger/comment/post"
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
