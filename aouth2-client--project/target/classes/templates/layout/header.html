@@ -73,12 +73,12 @@ text-decoration: none;
 				<div class="row">
 
 					<ul>
-					
 						<li style="float: left; margin-left: 10%"><a th:href="@{/admin/home}">Home</a></li>
+						<li style="float: left; " ><a th:href="@{/blogger/post}">Blog</a></li>
 						<li style="float: left; " sec:authorize="hasAuthority('ROLE_ADMIN')"><a th:href="@{/create/admin}">Admin Create</a></li>
-						<li style="float: left; " sec:authorize="hasAuthority('ROLE_ADMIN')"><a th:href="@{/pending/users}">Pending Users</a></li>
-						<li style="float: left; " sec:authorize="hasAuthority('ROLE_ADMIN')"><a th:href="@{/active/users}">Approved Users</a></li>
-
+						<li style="float: left; " sec:authorize="hasAuthority('ROLE_ADMIN')" ><a th:href="@{/pending/users}">Pending Users</a></li>
+						<li style="float: left; " sec:authorize="hasAuthority('ROLE_ADMIN')" ><a th:href="@{/active/users}">Approved Users</a></li>
+						<li style="float: left; " sec:authorize="hasAuthority('ROLE_ADMIN')" ><a th:href="@{/pending/post}">Pending post</a></li>
 						<li style="float: right;"><a th:href="@{/logout}">Logout</a></li>
 						
 

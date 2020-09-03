@@ -15,10 +15,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 
 @SpringBootApplication
-public class App {
+public class ClientServerRunner {
     
     public static void main(String[] args) {
-        SpringApplication.run(App.class, args);
+        SpringApplication.run(ClientServerRunner.class, args);
         System.out.println("Spring boot oauth client started...!");
     }
     

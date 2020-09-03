@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org">
+<head lang="en">
+<title>Users list</title>
+<th:block th:include="layout/header"></th:block>
+</head>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+	$(document).ready(
+			function() {
+				$("#myInput").on(
+						"keyup",
+						function() {
+							var value = $(this).val().toLowerCase();
+							$("#myTable tr").filter(
+									function() {
+										$(this).toggle(
+												$(this).text().toLowerCase()
+														.indexOf(value) > -1)
+									});
+						});
+			});
+</script>
+
+<body style="background-color: #DADBDB">
+	<div class="container">
+		<div>
+			<form class="form-horizontal" th:object="${blogPostDTO}" method="post"
+				th:action="@{/blog/post}" enctype="multipart/form-data">
+				<br />
+				<div class="panel-heading" sec:authorize="!hasAuthority('ROLE_ADMIN')">
+					<div class="col-md-10">
+						<textarea class="form-control" th:field="*{content}" placeholder="Enter your post....."></textarea>
+					</div>
+				</div>
+				
+				<div class="panel-heading" style="margin-top: 4%" sec:authorize="!hasAuthority('ROLE_ADMIN')">
+					<div class="col-md-10 ">
+							<button type="submit" class="btn btn-primary btn-block">submit Article
+								</button>
+					</div>
+				</div>
+
+				<table class="table table-hover table-success " th:each="value, rowStat : ${blogDTOs}" style="margin-top: 3%">
+					<thead>
+						<tr style="background: silver;">
+							<th scope="col" th:text="${value.users.username}">
+								
+							</th>
+							
+						</tr>
+						<tr style="background: silver;">
+							<th scope="col" th:text="${value.createDate}"></th>
+						</tr>
+					</thead>
+					<tbody id="myTable">
+						<tr>
+							<td th:text="${value.content}" style="background: white;"></td>
+						</tr>
+					</tbody>
+					<tfoot>
+							<tr style="background: silver;">
+								<td>
+									<a th:href="@{/approved/user(userId=${value.blogId})}" class="btn btn-primary col-md-offset-11">Delete<i class="fas fa-user-edit ml-2"></i></a>
+								</td>
+							</tr>
+					</tfoot>
+					
+				</table>
+
+			</form>
+		</div>
+	</div>
+</body>
+</html>
+

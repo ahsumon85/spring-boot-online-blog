@@ -4,7 +4,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AccessTokenProviderService {
+public class LoginUserCredentialsProvider {
 
 	public String provideAccessToken() {
 		String usernameWithAccessToken = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();

@@ -41,7 +41,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			if (userRoleList == null) {
 				userRoleList = new ArrayList<>();
 				UserRolesDTO userRoleDTO = new UserRolesDTO();
-				userRoleDTO.setRoleName("ROLE_ADMIN");
 				userRoleDTO.setUsername(username);
 				userRoleList.add(userRoleDTO);
 			}

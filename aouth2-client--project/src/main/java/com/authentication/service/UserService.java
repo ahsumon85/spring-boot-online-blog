@@ -15,7 +15,8 @@ import org.springframework.stereotype.Service;
 import com.authentication.common.ApiConsume;
 import com.authentication.common.StaticValueProvider;
 import com.authentication.common.StatusValue;
-import com.authentication.loginUsers.AccessTokenProviderService;
+import com.authentication.loginUsers.LoginUserCredentialsProvider;
+import com.authentication.user.model.BlogDTO;
 import com.authentication.user.model.UsersDTO;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
@@ -27,7 +28,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 public class UserService {
 
 	@Autowired
-	private AccessTokenProviderService token;
+	private LoginUserCredentialsProvider token;
 
 	public UsersDTO findUserInfosByUserName(String username) {
 		UsersDTO usersDTO = ApiConsume.consumeLoginUsersInfo(StaticValueProvider.LOGIN_USER_URI,
@@ -77,5 +78,29 @@ public class UserService {
 		} catch (UnirestException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void postBloggerContent(BlogDTO blogDTO) {
+		blogDTO.setPublish(StatusValue.INACTIVE.getValue());
+		blogDTO.setActiveStatus(StatusValue.INACTIVE.getValue());
+		UsersDTO user = findUserInfosByUserName(LoginUserCredentialsProvider.provideUsername());
+		blogDTO.setUsers(user);
+		ApiConsume.exposeBlogDTO(StaticValueProvider.LOGIN_BLOGGER_URI,"/post/create?access_token=" + token.provideAccessToken(), blogDTO);
+	}
+
+	public List<BlogDTO> findBloggerAllPost() {
+		return ApiConsume.consumeBlogDTO(StaticValueProvider.LOGIN_BLOGGER_URI,"/find/post?access_token=" + token.provideAccessToken());
+	}
+
+	public List<BlogDTO> findAllBloggerPendingPost() {
+		return ApiConsume.consumeBlogDTO(StaticValueProvider.LOGIN_ADMIN_URI,"/pending/post?access_token=" + token.provideAccessToken());
+	}
+	
+	public void approvedPostByAdmin(Long blogId) {
+		BlogDTO blogDTO = new BlogDTO();
+		blogDTO.setBlogId(blogId);
+		blogDTO.setActiveStatus(StatusValue.ACTIVE.getValue());
+		blogDTO.setPublish(StatusValue.ACTIVE.getValue());
+		ApiConsume.exposeBlogDTOWithPatch(StaticValueProvider.LOGIN_ADMIN_URI,"/approve?access_token=" + token.provideAccessToken(), blogDTO);
 	}
 }

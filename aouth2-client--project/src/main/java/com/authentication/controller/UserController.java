@@ -1,36 +1,36 @@
 package com.authentication.controller;
 
-import java.util.List;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.authentication.loginUsers.AccessTokenProviderService;
-import com.authentication.loginUsers.LoginService;
+import com.authentication.loginUsers.LoginUserCredentialsProvider;
 import com.authentication.service.UserService;
+import com.authentication.user.model.BlogDTO;
 import com.authentication.user.model.UsersDTO;
-import com.mashape.unirest.http.exceptions.UnirestException;
 
 @Controller
 public class UserController {
 
 	@Autowired
 	private UserService userService;
+	
+	@GetMapping(value = "/admin/home")
+	public ModelAndView home() {
+		ModelAndView modelAndView = new ModelAndView();
+		UsersDTO user = userService.findUserInfosByUserName(LoginUserCredentialsProvider.provideUsername());
+		modelAndView.addObject("userName", "Welcome " + user.getUsername());
+		modelAndView.addObject("adminMessage", "Content Available Only for Users with Admin Role");
+		modelAndView.setViewName("admin/home");
+		return modelAndView;
+	}
 
 	@GetMapping(value = "/registration")
 	public ModelAndView bloggerSignUpFrom() {
@@ -109,36 +109,41 @@ public class UserController {
 		modelAndView.setViewName("approved-blogger");
 		return modelAndView;
 	}
-
-	/*
-	 * @RequestMapping(value = "/new/password", method = RequestMethod.POST) public
-	 * ModelAndView newPassword(UserDTO userDTO) { ModelAndView modelAndView = new
-	 * ModelAndView(); Authentication auth =
-	 * SecurityContextHolder.getContext().getAuthentication();
-	 * 
-	 * if (userDTO.getNewPass().equals(userDTO.getConfirmPass())) { User user =
-	 * userService.findUserByEmail(auth.getName()); Boolean status =
-	 * userService.isPasswordValid(userDTO.getPassword(), user.getPassword()); if
-	 * (status == true) {
-	 * 
-	 * userService.changePasswor(user, userDTO); modelAndView.setViewName("login");
-	 * } else { modelAndView.addObject("wrongPass",
-	 * "Current possword was wrong..!");
-	 * modelAndView.setViewName("password-update"); }
-	 * 
-	 * } else { modelAndView.addObject("passMatched",
-	 * "Password doesn't matched..!"); modelAndView.setViewName("password-update");
-	 * } return modelAndView; }
-	 */
-
-	@RequestMapping(value = "/admin/home", method = RequestMethod.GET)
-	public ModelAndView home() {
+	
+	
+	
+	@GetMapping(value = "/blogger/post")
+	public ModelAndView findBloggerAllPost() {
 		ModelAndView modelAndView = new ModelAndView();
-		UsersDTO user = userService.findUserInfosByUserName(AccessTokenProviderService.provideUsername());
-		modelAndView.addObject("userName", "Welcome " + user.getUsername());
-		modelAndView.addObject("adminMessage", "Content Available Only for Users with Admin Role");
-		modelAndView.setViewName("admin/home");
+		modelAndView.addObject("blogPostDTO", new BlogDTO());
+		modelAndView.addObject("blogDTOs", userService.findBloggerAllPost());
+		modelAndView.setViewName("blogger-post");
 		return modelAndView;
 	}
+	
+	
+	@PostMapping(value = "/blog/post")
+	public String postBloggerContent(@Valid @ModelAttribute("blogPostDTO") BlogDTO blogPostDTO) {
+		userService.postBloggerContent(blogPostDTO);
+		return "redirect:/blogger/post";
+	}
+	
+	@GetMapping(value = "/pending/post")
+	public ModelAndView findAllBloggerPendingPost() {
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.addObject("pendingBlogInfos", userService.findAllBloggerPendingPost());
+		modelAndView.setViewName("pending-post");
+		return modelAndView;
+	}
+	
+	
+	@GetMapping(value = "/approved/post")
+	public String approvedPostByAdmin(@Valid @RequestParam Long blogId) {
+		userService.approvedPostByAdmin(blogId);
+		return "redirect:/pending/post";
+	}
+	
+	
+	
 
 }

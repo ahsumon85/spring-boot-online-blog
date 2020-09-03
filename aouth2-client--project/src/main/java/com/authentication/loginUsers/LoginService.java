@@ -17,10 +17,6 @@ public class LoginService {
 					.header("authorization", LoginUtils.OAUTH_AUTHORIZATION_HEADER)
 					.header("cache-control", LoginUtils.OAUTH_CACHE_CONTROL)
 					.body(LoginUtils.getOauthBody(username, password)).asString();
-			
-		
-
-
 			if (response.getStatus() == 200) {
 
 				JSONObject jSONObject = new JSONObject(response.getBody());

@@ -30,27 +30,30 @@
 				th:action="@{/savePlayerUrl}" enctype="multipart/form-data">
 				<br />
 				<div class="panel-heading">
-					<div class="col-md-4 col-md-offset-8">
+					<div class="col-md-12">
 						<input id="myInput" class="form-control" type="text"
 							placeholder="Search..." aria-label="Search" />
 					</div>
 				</div>
 
-				<table class="table table-hover table-success">
+				<table class="table table-hover table-success" style="margin-top: 3%">
 					<thead>
-						<tr style="background: silver; ">
-							<th scope="col">User ID</th>
-							<th scope="col">User Name</th>
-							<th scope="col">Status</th>
+						<tr style="background: silver;">
+							<th scope="col">Id</th>
+							<th scope="col">Content</th>
+							<th scope="col">Post By</th>
+							<th scope="col">Create time</th>
 							<th scope="col">Action</th>
+
 						</tr>
 					</thead>
 					<tbody id="myTable">
-						<tr th:each="value, rowStat : ${userInfos}">
+						<tr th:each="value, rowStat : ${pendingBlogInfos}">
 							<th th:text="${rowStat.count}"></th>
-							<td th:text="${value.username}">Name</td>
-							<td th:text="${value.enabled}">age</td>
-							<td><a th:href="@{/approved/user(userId=${value.userId})}" class="btn btn-primary">Approve<i class="fas fa-user-edit ml-2"></i></a></td>
+							<td th:text="${value.content}">Content</td>
+							<td th:text="${value.users.username}">Post By</td>
+							<td th:text="${value.createDate}">Create time</td>
+							<td><a th:href="@{/approved/post(blogId=${value.blogId})}" class="btn btn-primary col-md-10">Approve<i class="fas fa-user-edit ml-8"></i></a></td>
 						</tr>
 					</tbody>
 				</table>
