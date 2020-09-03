@@ -27,9 +27,10 @@ import org.springframework.security.core.userdetails.UserDetails;
  */
 @Entity
 @Table(name = "users")
-public class Users implements Serializable,UserDetails {
+public class Users implements Serializable, UserDetails {
 
-    @Id
+
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -54,7 +55,6 @@ public class Users implements Serializable,UserDetails {
         this.id = id;
     }
 
-    @Override
     public String getUsername() {
         return username;
     }
@@ -63,7 +63,6 @@ public class Users implements Serializable,UserDetails {
         this.username = username;
     }
 
-    @Override
     public String getPassword() {
         return password;
     }
@@ -72,7 +71,6 @@ public class Users implements Serializable,UserDetails {
         this.password = password;
     }
 
-    @Override
     public boolean isEnabled() {
         return enabled;
     }
@@ -89,6 +87,7 @@ public class Users implements Serializable,UserDetails {
         this.roles = roles;
     }
 
+  
     
     
     /////////////////////////////////////////////////
@@ -118,7 +117,5 @@ public class Users implements Serializable,UserDetails {
     public boolean isCredentialsNonExpired() {
         return true;
     }
-
-    
 
     }

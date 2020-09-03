@@ -18,6 +18,7 @@ import com.authorization.common.utils.StatusValue;
 import com.authorization.user.model.dto.BlogDTO;
 import com.authorization.user.model.dto.CommentDTO;
 import com.authorization.user.model.dto.LikeAndDislikeDTO;
+import com.authorization.user.model.dto.UsersDTO;
 import com.authorization.user.model.entity.Blog;
 import com.authorization.user.model.entity.Comment;
 import com.authorization.user.model.entity.LikeAndDislike;
@@ -64,10 +65,10 @@ public class BloggerServiceImpl implements BloggerService {
 
 	
 	public List<BlogDTO> findAllApproedBloggerPost(int status, int publish) {
-		List<Blog> deactivateUsersInfo = blogRepository.findByActiveStatusAndPublish(status, publish);
+		List<Blog> findApprovedBloggerPost = blogRepository.findByActiveStatusAndPublish(status, publish);
 		List<LikeAndDislike> postLikeDislikeList = likeAndDislikeRepository.findAll();
 		List<Comment> psotCommentList = commentRepository.findAll();
-		return deactivateUsersInfo.stream().map(blog -> provideBlogToBlogDto(blog, psotCommentList, postLikeDislikeList)).collect(Collectors.toList());
+		return findApprovedBloggerPost.stream().map(blog -> provideBlogToBlogDto(blog, psotCommentList, postLikeDislikeList)).collect(Collectors.toList());
 	}	
 	
 	
@@ -81,18 +82,18 @@ public class BloggerServiceImpl implements BloggerService {
 	
 	private LikeAndDislike copyLikeAndDislikeDtoToEntity(LikeAndDislikeDTO likeAndDislikeDTO) {
 		LikeAndDislike likeAndDislike = new LikeAndDislike();
-		LikeAndDislike recourdedLikeAndDis = likeAndDislikeRepository.findByBlog_blogId(likeAndDislikeDTO.getBlog().getBlogId());
+		LikeAndDislike recordedLikeAndDis = likeAndDislikeRepository.findByBlog_BlogId(likeAndDislikeDTO.getBlog().getBlogId());
 		BeanUtils.copyProperties(likeAndDislikeDTO, likeAndDislike);
 		likeAndDislike.setBlog(provideBlogByBlogId(likeAndDislikeDTO.getBlog().getBlogId()));
-		if(recourdedLikeAndDis.getLikes() == StatusValue.LIKE.getValue()) {
-			likeAndDislike.setLikes(likeAndDislikeDTO.getLikes() + 1);
+		likeAndDislike.setLikeDislikeId(recordedLikeAndDis != null ? recordedLikeAndDis.getLikeDislikeId() : null);
+		if(likeAndDislikeDTO.getLikes() == StatusValue.LIKE.getValue()) {
+			int like = recordedLikeAndDis != null ? recordedLikeAndDis.getLikes() + 1 : likeAndDislikeDTO.getLikes();
+			likeAndDislike.setLikes(like);
+			likeAndDislike.setDislikes(recordedLikeAndDis.getDislikes());
 		}else {
-			likeAndDislike.setLikes(recourdedLikeAndDis.getLikes());
-		}
-		if (recourdedLikeAndDis.getDislikes() == StatusValue.DISLIKE.getValue()) {
-			likeAndDislike.setDislikes(likeAndDislikeDTO.getDislikes() + 1);
-		}else {
-			likeAndDislike.setDislikes(recourdedLikeAndDis.getDislikes());
+			int dislike = recordedLikeAndDis != null ? recordedLikeAndDis.getDislikes() + 1 : likeAndDislikeDTO.getDislikes();
+			likeAndDislike.setDislikes(dislike);
+			likeAndDislike.setLikes(recordedLikeAndDis.getLikes());
 		}
 		return likeAndDislike;
 	}
@@ -115,7 +116,7 @@ public class BloggerServiceImpl implements BloggerService {
 		Comment comment = new Comment();
 		BeanUtils.copyProperties(commentDTO, comment);
 		comment.setBlog(provideBlogByBlogId(commentDTO.getBlog().getBlogId()));
-		comment.setUsers(provideUserByUserId(commentDTO.getUsers().getId()));
+		comment.setUsers(provideUserByUserId(commentDTO.getUsers().getUserId()));
 		return comment;
 	}
 
@@ -125,7 +126,7 @@ public class BloggerServiceImpl implements BloggerService {
 	private Blog copyBlogDtoToBlog(@Valid BlogDTO blogDTO) {
 		Blog blog = new Blog();
 		BeanUtils.copyProperties(blogDTO, blog);
-		blog.setUsers(provideUserByUserId(blogDTO.getUsers().getId()));
+		blog.setUsers(provideUserByUserId(blogDTO.getUsers().getUserId()));
 		return blog;
 	}
 	
@@ -155,12 +156,25 @@ public class BloggerServiceImpl implements BloggerService {
 	
 	public BlogDTO provideBlogToBlogDto(Blog blog, List<Comment> psotCommentList, List<LikeAndDislike> postLikeDislikeList) {
 		BlogDTO blogDTO = new BlogDTO();
+		UsersDTO usersDTO = new UsersDTO();
 		List<Comment> commentListByBlogId = psotCommentList.stream().filter(com -> com.getBlog().getBlogId() == blog.getBlogId()).collect(Collectors.toList());
 		LikeAndDislike likeDislikeByBlogId = postLikeDislikeList.stream().filter(likeDislike -> likeDislike.getBlog().getBlogId() == blog.getBlogId()).findFirst().orElse(null);
 		BeanUtils.copyProperties(blog, blogDTO);
+		BeanUtils.copyProperties(blog.getUsers(), usersDTO);
+		blogDTO.setUsers(usersDTO);
 		blogDTO.setCreateDate(ApplicationUtils.convertDateToLocalDateTime(blog.getCreateDate()));
 		blogDTO.setBloggerLikeDislikes(likeDislikeByBlogId);
-		blogDTO.setBloggerComment(commentListByBlogId);
+		
+		List<CommentDTO> provideCommentDTO = commentListByBlogId.stream().map(comment -> {
+			CommentDTO commentDTO = new CommentDTO();
+			UsersDTO userDTO = new UsersDTO();
+			BeanUtils.copyProperties(comment, commentDTO);
+			BeanUtils.copyProperties(comment.getUsers(), userDTO);
+			commentDTO.setUsers(userDTO);
+			return commentDTO;
+		}).collect(Collectors.toList());
+		
+		blogDTO.setBloggerComment(provideCommentDTO);
 		return blogDTO;
 	}
 

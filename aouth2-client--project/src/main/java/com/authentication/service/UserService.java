@@ -7,22 +7,16 @@
 package com.authentication.service;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.authentication.common.ApiConsume;
 import com.authentication.common.StaticValueProvider;
 import com.authentication.common.StatusValue;
 import com.authentication.loginUsers.AccessTokenProviderService;
-import com.authentication.user.model.UserRolesDTO;
 import com.authentication.user.model.UsersDTO;
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 /**
@@ -53,19 +47,16 @@ public class UserService {
 		String userRole[] = new String[] { "ROLE_ADMIN", "ROLE_BLOGGER" };
 		userDTO.setEnabled(StatusValue.ACTIVE.getStatus());
 		userDTO.setRoles(Arrays.asList(userRole));
-		ApiConsume.exposeLoginUsersDTO(StaticValueProvider.LOGIN_USER_URI,
-				"/create/admin?access_token=" + token.provideAccessToken(), userDTO);
+		ApiConsume.exposeLoginUsersDTO(StaticValueProvider.LOGIN_USER_URI,"/create/admin?access_token=" + token.provideAccessToken(), userDTO);
 	}
 
 	public List<UsersDTO> findAllPendingUsers() {
-		return ApiConsume.consumeLoginUsersInfoList(StaticValueProvider.LOGIN_USER_URI,
-				"/find/inactive/users?access_token=" + token.provideAccessToken());
+		return ApiConsume.consumeLoginUsersInfoList(StaticValueProvider.LOGIN_USER_URI,"/find/inactive/users?access_token=" + token.provideAccessToken());
 	}
 	
 	
 	public List<UsersDTO> findAllApprovedUsers() {
-		return ApiConsume.consumeLoginUsersInfoList(StaticValueProvider.LOGIN_USER_URI,
-				"/find/active/users?access_token=" + token.provideAccessToken());
+		return ApiConsume.consumeLoginUsersInfoList(StaticValueProvider.LOGIN_USER_URI,"/find/active/users?access_token=" + token.provideAccessToken());
 	}
 
 	public void approvedFendingUser(Long userId) {

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org">
 <head lang="en">
 
 <link th:href="@{/webjars/bootstrap/3.3.7-1/css/bootstrap.min.css}"
@@ -75,9 +75,9 @@ text-decoration: none;
 					<ul>
 					
 						<li style="float: left; margin-left: 10%"><a th:href="@{/admin/home}">Home</a></li>
-						<li style="float: left; "><a th:href="@{/create/admin}">Admin Create</a></li>
-						<li style="float: left; "><a th:href="@{/pending/users}">Pending Users</a></li>
-						<li style="float: left; "><a th:href="@{/active/users}">Approved Users</a></li>
+						<li style="float: left; " sec:authorize="hasAuthority('ROLE_ADMIN')"><a th:href="@{/create/admin}">Admin Create</a></li>
+						<li style="float: left; " sec:authorize="hasAuthority('ROLE_ADMIN')"><a th:href="@{/pending/users}">Pending Users</a></li>
+						<li style="float: left; " sec:authorize="hasAuthority('ROLE_ADMIN')"><a th:href="@{/active/users}">Approved Users</a></li>
 
 						<li style="float: right;"><a th:href="@{/logout}">Logout</a></li>
 						

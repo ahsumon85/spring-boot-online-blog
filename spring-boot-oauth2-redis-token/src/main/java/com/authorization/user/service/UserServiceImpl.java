@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	public BaseResponse createAminOrBloggerAccount(UsersDTO usersDTO) {
 		Users user = provideUserDtoToUser(usersDTO);
-		List<UserRoles> userRoles = provideUsrRolesByUsrDto(usersDTO, user);
+		List<UserRoles> userRoles = provideUsrRolesByUsrDto(usersDTO);
 		userRepository.save(user);
 		userRolesRepository.save(userRoles);
 		return new BaseResponse(CustomMessage.SAVE_SUCCESS_MESSAGE);
@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	public BaseResponse approveAndDeactiveUsrByAdmin(Long userId, boolean status) {
 		userRepository.approveIncativeUser(userId, status);
-		return new BaseResponse(UserInfo.BLOGGER.getName() + CustomMessage.BLOGGER_ACTIVE_SUCCESS);
+		return new BaseResponse(UserInfo.BLOGGER.getType() + CustomMessage.BLOGGER_ACTIVE_SUCCESS);
 	}
 
 	@Transactional
@@ -66,14 +66,14 @@ public class UserServiceImpl implements UserService {
 		return users != null ? provideUserToUserDto(users) : new UsersDTO();
 	}
 
-	private List<UserRoles> provideUsrRolesByUsrDto(UsersDTO userDTO, Users user) {
+	private List<UserRoles> provideUsrRolesByUsrDto(UsersDTO userDTO) {
 		List<UserRoles> userRolesList = new ArrayList<>();
-		for (String singleRole : userDTO.getRoles()) {
+		userDTO.getRoles().forEach(role -> {
 			UserRoles userRoles = new UserRoles();
 			userRoles.setUsername(userDTO.getUsername());
-			userRoles.setRoleName(singleRole);
+			userRoles.setRoleName(role);
 			userRolesList.add(userRoles);
-		}
+		});
 		return userRolesList;
 	}
 

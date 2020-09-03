@@ -5,7 +5,7 @@ public enum StatusValue {
 	ACTIVE("Active", 1, true),
 	INACTIVE("Inactive", 0, false),
 	LIKE("Like", 1, true),
-	DISLIKE("Dislike", 2, false);
+	DISLIKE("Dislike", 0, false);
 	
 	private final String name;
 	

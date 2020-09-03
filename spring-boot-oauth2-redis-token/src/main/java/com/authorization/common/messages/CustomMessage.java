@@ -10,8 +10,8 @@ public class CustomMessage {
 	public static final String BLOGGER_ACTIVE_SUCCESS = " activation has been successfully!";
 	public static final String BLOGGER_ACTIVE_FAILED = " activation could not be successfully!";
 	
-	public static final String BLOG_APPROVE_SUCCESS = " blog has been approved successfully!";
-	public static final String BLOG_APPROVE_FAILD = " could not be approved successfully!";
+	public static final String BLOG_APPROVE_SUCCESS = "blog has been approved successfully!";
+	public static final String BLOG_APPROVE_FAILD = "could not be approved successfully!";
 	
 	public static final String BLOG_POST_SUCCESS = "blog post has been successfully created!";
 	public static final String BLOG_POST_FAILD = "blog post could not be create successfully!";

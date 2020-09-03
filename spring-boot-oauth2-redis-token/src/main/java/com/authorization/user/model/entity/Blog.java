@@ -31,7 +31,7 @@ public class Blog {
 	@Column(name = "create_date"/* , updatable = false, nullable = false */)
 	private Date createDate = new Date();
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne (fetch = FetchType.LAZY) 
 	@JoinColumn(name = "id", nullable = false)
 	private Users users;
 

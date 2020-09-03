@@ -13,7 +13,7 @@ public class CommentDTO {
 
 	private Blog blog;
 
-	private Users users;
+	private UsersDTO users;
 
 	public Long getCommentId() {
 		return commentId;
@@ -47,11 +47,11 @@ public class CommentDTO {
 		this.blog = blog;
 	}
 
-	public Users getUsers() {
+	public UsersDTO getUsers() {
 		return users;
 	}
 
-	public void setUsers(Users users) {
+	public void setUsers(UsersDTO users) {
 		this.users = users;
 	}
 

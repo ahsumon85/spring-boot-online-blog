@@ -8,6 +8,6 @@ public interface LikeAndDislikeRepository extends JpaRepository<LikeAndDislike, 
 
 	void deleteByBlog_BlogId(long blogId);
 
-	LikeAndDislike findByBlog_blogId(Long blogId);
+	LikeAndDislike findByBlog_BlogId(Long blogId);
 
 }

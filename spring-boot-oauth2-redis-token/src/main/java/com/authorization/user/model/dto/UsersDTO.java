@@ -24,8 +24,6 @@ public class UsersDTO {
 
 	private List<String> roles;
 
-	private String type;
-
 	public Long getUserId() {
 		return userId;
 	}
@@ -56,14 +54,6 @@ public class UsersDTO {
 
 	public void setRoles(List<String> roles) {
 		this.roles = roles;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
 	}
 
 	public boolean isEnabled() {

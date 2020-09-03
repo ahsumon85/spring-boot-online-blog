@@ -34,7 +34,7 @@ public class AuthorizationUserDetailsService implements UserDetailsService{
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        
+        UserDetails userDetails;
         Users user = usersRepository.findByUsername(username);
         if (user != null) {
                 List<String> roles = new ArrayList<>(); 
@@ -43,7 +43,7 @@ public class AuthorizationUserDetailsService implements UserDetailsService{
                 roles.add(r.getRoleName());
             });
                 user.setRoles(roles);
-                return user;
+                return (UserDetails) user;
 
             } else {
                 throw new RuntimeException("user not found");

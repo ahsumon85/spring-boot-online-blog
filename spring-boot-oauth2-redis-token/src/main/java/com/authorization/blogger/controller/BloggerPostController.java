@@ -22,6 +22,8 @@ import com.authorization.blogger.service.BloggerService;
 import com.authorization.common.messages.BaseResponse;
 import com.authorization.common.utils.StatusValue;
 import com.authorization.user.model.dto.BlogDTO;
+import com.authorization.user.model.dto.CommentDTO;
+import com.authorization.user.model.dto.LikeAndDislikeDTO;
 
 @RestController
 @RequestMapping(value = "/blogger")
@@ -31,14 +33,28 @@ public class BloggerPostController {
 	@Autowired
 	private BloggerService bloggerService;
 
-	@PreAuthorize("hasRole('USER')")
+	@PreAuthorize("hasRole('ROLE_BLOGGER')")
 	@PostMapping("/post/create")
 	public ResponseEntity<BaseResponse> createBlogPostByBlogger(@Valid @RequestBody BlogDTO blogDTO) {
 		BaseResponse response = bloggerService.createBlogPostByBlogger(blogDTO);
 		return new ResponseEntity<>(response, HttpStatus.CREATED);
 	}
-
-	@PreAuthorize("hasRole('USER')")
+	
+	@PreAuthorize("hasRole('ROLE_BLOGGER')")
+	@PostMapping("/like/post")
+	public ResponseEntity<BaseResponse> likeAndDisOtherBloggerPost(@Valid @RequestBody LikeAndDislikeDTO likeAndDislikeDTO) {
+		BaseResponse response = bloggerService.likeAndDislikeOtherApprvPost(likeAndDislikeDTO);
+		return new ResponseEntity<>(response, HttpStatus.CREATED);
+	}
+	
+	@PreAuthorize("hasRole('ROLE_BLOGGER')")
+	@PostMapping("/comment/post")
+	public ResponseEntity<BaseResponse> commentOtherBloggerPost(@Valid @RequestBody CommentDTO commentDTO) {
+		BaseResponse response = bloggerService.commentOtherApprovedPost(commentDTO);
+		return new ResponseEntity<>(response, HttpStatus.CREATED);
+	}
+	
+	@PreAuthorize("hasRole('ROLE_BLOGGER')")
 	@DeleteMapping(value = "/delete/{userId}/{blogId}")
 	public ResponseEntity<BaseResponse> deleteOwnBlogPostById(@Valid @NotNull(message = "userId must not be null") @PathVariable("userId") int userId,
 															@Valid @NotNull(message = "blogId must not be null") @PathVariable("blogId") Long blogId) {
@@ -47,8 +63,10 @@ public class BloggerPostController {
 	}
 	
 	
-	@PreAuthorize("hasRole('USER')")
-	@GetMapping(value = "/find")
+	
+	
+	@PreAuthorize("hasRole('ROLE_BLOGGER') or hasRole('ROLE_ADMIN')")
+	@GetMapping(value = "/find/post")
 	public ResponseEntity<List<BlogDTO>> findAllApproedBloggerPost() {
 		List<BlogDTO> list = bloggerService.findAllApproedBloggerPost(StatusValue.ACTIVE.getValue(), StatusValue.ACTIVE.getValue());
 		return new ResponseEntity<List<BlogDTO>>(list, HttpStatus.OK);

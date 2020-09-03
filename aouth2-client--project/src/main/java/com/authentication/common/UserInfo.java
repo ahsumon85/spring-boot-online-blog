@@ -1,4 +1,4 @@
-package com.authorization.common.utils;
+package com.authentication.common;
 
 public enum UserInfo {
 

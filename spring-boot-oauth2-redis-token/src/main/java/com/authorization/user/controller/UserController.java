@@ -88,8 +88,7 @@ public class UserController {
 
 	@GetMapping(value = "/info")
 	public UsersDTO findUserByUserName(@Valid @NotEmpty(message = "User name not be null") @RequestParam String username) {
-		UsersDTO usersDTO = userService.findUserByUserName(username);
-		return usersDTO;
+		return userService.findUserByUserName(username);
 	}
 
 }

@@ -12,6 +12,7 @@ import com.authorization.common.messages.BaseResponse;
 import com.authorization.common.messages.CustomMessage;
 import com.authorization.common.utils.ApplicationUtils;
 import com.authorization.user.model.dto.BlogDTO;
+import com.authorization.user.model.dto.UsersDTO;
 import com.authorization.user.model.entity.Blog;
 import com.authorization.user.repository.BlogRepository;
 import com.authorization.user.repository.CommentRepository;
@@ -65,8 +66,11 @@ public class AdminPostServiceImpl implements AdminPostService {
 	
 	public BlogDTO provideBlogToBlogDto(Blog blog) {
 		BlogDTO blogDTO = new BlogDTO();
+		UsersDTO usersDTO = new UsersDTO();
 		BeanUtils.copyProperties(blog, blogDTO);
 		blogDTO.setCreateDate(ApplicationUtils.convertDateToLocalDateTime(blog.getCreateDate()));
+		BeanUtils.copyProperties(blog.getUsers(), usersDTO);
+		blogDTO.setUsers(usersDTO);
 		return blogDTO;
 	}
 

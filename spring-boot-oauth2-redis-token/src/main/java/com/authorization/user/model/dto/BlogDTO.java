@@ -20,9 +20,9 @@ public class BlogDTO {
 
 	private LikeAndDislike bloggerLikeDislikes;
 
-	private List<Comment> bloggerComment;
+	private List<CommentDTO> bloggerComment;
 
-	private Users users;
+	private UsersDTO users;
 
 	public Long getBlogId() {
 		return blogId;
@@ -72,19 +72,19 @@ public class BlogDTO {
 		this.bloggerLikeDislikes = bloggerLikeDislikes;
 	}
 
-	public List<Comment> getBloggerComment() {
+	public List<CommentDTO> getBloggerComment() {
 		return bloggerComment;
 	}
 
-	public void setBloggerComment(List<Comment> bloggerComment) {
+	public void setBloggerComment(List<CommentDTO> bloggerComment) {
 		this.bloggerComment = bloggerComment;
 	}
 
-	public Users getUsers() {
+	public UsersDTO getUsers() {
 		return users;
 	}
 
-	public void setUsers(Users users) {
+	public void setUsers(UsersDTO users) {
 		this.users = users;
 	}
 
