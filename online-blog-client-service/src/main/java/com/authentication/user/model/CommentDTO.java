@@ -11,6 +11,8 @@ public class CommentDTO {
 	private BlogDTO blog;
 
 	private UsersDTO users;
+	
+	private Long blogId;
 
 	public Long getCommentId() {
 		return commentId;
@@ -50,6 +52,14 @@ public class CommentDTO {
 
 	public void setUsers(UsersDTO users) {
 		this.users = users;
+	}
+
+	public Long getBlogId() {
+		return blogId;
+	}
+
+	public void setBlogId(Long blogId) {
+		this.blogId = blogId;
 	}
 
 }

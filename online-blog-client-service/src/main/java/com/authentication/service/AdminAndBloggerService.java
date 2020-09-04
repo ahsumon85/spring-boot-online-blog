@@ -8,15 +8,17 @@ package com.authentication.service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.authentication.common.ApiConsume;
+import com.authentication.common.ApiExposeAndConsume;
 import com.authentication.common.StaticValueProvider;
 import com.authentication.common.StatusValue;
 import com.authentication.loginUsers.LoginUserCredentialsProvider;
 import com.authentication.user.model.BlogDTO;
+import com.authentication.user.model.CommentDTO;
 import com.authentication.user.model.LikeAndDislikeDTO;
 import com.authentication.user.model.UsersDTO;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -32,7 +34,7 @@ public class AdminAndBloggerService {
 	private LoginUserCredentialsProvider token;
 
 	public UsersDTO findUserInfosByUserName(String username) {
-		UsersDTO usersDTO = ApiConsume.consumeLoginUsersInfo(StaticValueProvider.LOGIN_USER_URI,
+		UsersDTO usersDTO = ApiExposeAndConsume.consumeLoginUsersInfo(StaticValueProvider.LOGIN_USER_URI,
 				"/info?username=" + username);
 		return usersDTO;
 	}
@@ -41,7 +43,7 @@ public class AdminAndBloggerService {
 		String userRole[] = new String[] { "ROLE_BLOGGER" };
 		userDTO.setEnabled(StatusValue.INACTIVE.getStatus());
 		userDTO.setRoles(Arrays.asList(userRole));
-		ApiConsume.exposeLoginUsersDTO(StaticValueProvider.LOGIN_USER_URI, "/create/blogger", userDTO);
+		ApiExposeAndConsume.exposeLoginUsersDTO(StaticValueProvider.LOGIN_USER_URI, "/create/blogger", userDTO);
 
 	}
 
@@ -49,22 +51,22 @@ public class AdminAndBloggerService {
 		String userRole[] = new String[] { "ROLE_ADMIN", "ROLE_BLOGGER" };
 		userDTO.setEnabled(StatusValue.ACTIVE.getStatus());
 		userDTO.setRoles(Arrays.asList(userRole));
-		ApiConsume.exposeLoginUsersDTO(StaticValueProvider.LOGIN_USER_URI,"/create/admin?access_token=" + token.provideAccessToken(), userDTO);
+		ApiExposeAndConsume.exposeLoginUsersDTO(StaticValueProvider.LOGIN_USER_URI,"/create/admin?access_token=" + token.provideAccessToken(), userDTO);
 	}
 
 	public List<UsersDTO> findAllPendingUsers() {
-		return ApiConsume.consumeLoginUsersInfoList(StaticValueProvider.LOGIN_USER_URI,"/find/inactive/users?access_token=" + token.provideAccessToken());
+		return ApiExposeAndConsume.consumeLoginUsersInfoList(StaticValueProvider.LOGIN_USER_URI,"/find/inactive/users?access_token=" + token.provideAccessToken());
 	}
 	
 	
 	public List<UsersDTO> findAllApprovedUsers() {
-		return ApiConsume.consumeLoginUsersInfoList(StaticValueProvider.LOGIN_USER_URI,"/find/active/users?access_token=" + token.provideAccessToken());
+		return ApiExposeAndConsume.consumeLoginUsersInfoList(StaticValueProvider.LOGIN_USER_URI,"/find/active/users?access_token=" + token.provideAccessToken());
 	}
 
 	public void approvedFendingUser(Long userId) {
 
 		try {
-			ApiConsume.exposeStringurlByPost(StaticValueProvider.BASE_URL + StaticValueProvider.LOGIN_USER_URI + "/approve/deactivate?userId=" + userId
+			ApiExposeAndConsume.exposeStringurlByPost(StaticValueProvider.BASE_URL + StaticValueProvider.LOGIN_USER_URI + "/approve/deactivate?userId=" + userId
 					+ "&active=true&access_token=" + token.provideAccessToken());
 		} catch (UnirestException e) {
 			e.printStackTrace();
@@ -74,7 +76,7 @@ public class AdminAndBloggerService {
 	public void deactivateApprovedUser(Long userId) {
 
 		try {
-			ApiConsume.exposeStringurlByPost(StaticValueProvider.BASE_URL + StaticValueProvider.LOGIN_USER_URI + "/approve/deactivate?userId=" + userId
+			ApiExposeAndConsume.exposeStringurlByPost(StaticValueProvider.BASE_URL + StaticValueProvider.LOGIN_USER_URI + "/approve/deactivate?userId=" + userId
 					+ "&active=false&access_token=" + token.provideAccessToken());
 		} catch (UnirestException e) {
 			e.printStackTrace();
@@ -86,24 +88,20 @@ public class AdminAndBloggerService {
 		blogDTO.setActiveStatus(StatusValue.INACTIVE.getValue());
 		UsersDTO user = findUserInfosByUserName(LoginUserCredentialsProvider.provideUsername());
 		blogDTO.setUsers(user);
-		ApiConsume.exposeBlogDTO(StaticValueProvider.LOGIN_BLOGGER_URI,"/post/create?access_token=" + token.provideAccessToken(), blogDTO);
+		ApiExposeAndConsume.exposeBlogDTO(StaticValueProvider.LOGIN_BLOGGER_URI,"/post/create?access_token=" + token.provideAccessToken(), blogDTO);
 	}
 
 	public List<BlogDTO> findBloggerAllPost() {
-	List<BlogDTO>  blogDTOs=  ApiConsume.consumeBlogDTO(StaticValueProvider.LOGIN_BLOGGER_URI,"/find/post?access_token=" + token.provideAccessToken());
-	blogDTOs.stream().forEach(like ->{
-		if(like.getBloggerLikeDislikes() == null) {
-			LikeAndDislikeDTO likeAndDislikeDTO = new LikeAndDislikeDTO();
-			likeAndDislikeDTO.setLikes(0);
-			likeAndDislikeDTO.setDislikes(0);
-			like.setBloggerLikeDislikes(likeAndDislikeDTO);
-		}
-	});
+	List<BlogDTO>  blogDTOs=  ApiExposeAndConsume.consumeBlogDTO(StaticValueProvider.LOGIN_BLOGGER_URI,"/find/post?access_token=" + token.provideAccessToken());
+	blogDTOs.stream().map(blog ->{
+		blog.setUserAndDate("Blogger : " + blog.getUsers().getUsername() +"   "+"Time : "+ blog.getCreateDate());
+		return blog;
+	}).collect(Collectors.toList());
 	 return blogDTOs;
 	}
 
 	public List<BlogDTO> findAllBloggerPendingPost() {
-		return ApiConsume.consumeBlogDTO(StaticValueProvider.LOGIN_ADMIN_URI,"/pending/post?access_token=" + token.provideAccessToken());
+		return ApiExposeAndConsume.consumeBlogDTO(StaticValueProvider.LOGIN_ADMIN_URI,"/pending/post?access_token=" + token.provideAccessToken());
 	}
 	
 	public void approvedPostByAdmin(Long blogId) {
@@ -111,12 +109,12 @@ public class AdminAndBloggerService {
 		blogDTO.setBlogId(blogId);
 		blogDTO.setActiveStatus(StatusValue.ACTIVE.getValue());
 		blogDTO.setPublish(StatusValue.ACTIVE.getValue());
-		ApiConsume.exposeBlogDTOWithPatch(StaticValueProvider.LOGIN_ADMIN_URI,"/approve?access_token=" + token.provideAccessToken(), blogDTO);
+		ApiExposeAndConsume.exposeBlogDTOWithPatch(StaticValueProvider.LOGIN_ADMIN_URI,"/approve?access_token=" + token.provideAccessToken(), blogDTO);
 	}
 
 	public void deleteOtherBloggerPost(Long blogId) {
 		try {
-			ApiConsume.exposeStringurlByDelete(StaticValueProvider.BASE_URL + StaticValueProvider.LOGIN_ADMIN_URI + 
+			ApiExposeAndConsume.exposeStringurlByDelete(StaticValueProvider.BASE_URL + StaticValueProvider.LOGIN_ADMIN_URI + 
 					"/delete?blogId="+ blogId + "&access_token=" + token.provideAccessToken());
 		} catch (UnirestException e) {
 			e.printStackTrace();
@@ -130,7 +128,7 @@ public class AdminAndBloggerService {
 		likeAndDislikeDTO.setLikes(1);
 		blogDTO.setBlogId(blogId);
 		likeAndDislikeDTO.setBlog(blogDTO);
-		ApiConsume.exposeLikeDislikeDTO(StaticValueProvider.LOGIN_BLOGGER_URI, "/like/post?access_token=" + token.provideAccessToken(), likeAndDislikeDTO);
+		ApiExposeAndConsume.exposeLikeDislikeDTO(StaticValueProvider.LOGIN_BLOGGER_URI, "/like/post?access_token=" + token.provideAccessToken(), likeAndDislikeDTO);
 		
 	}
 
@@ -140,9 +138,24 @@ public class AdminAndBloggerService {
 		likeAndDislikeDTO.setDislikes(1);
 		blogDTO.setBlogId(blogId);
 		likeAndDislikeDTO.setBlog(blogDTO);
-		ApiConsume.exposeLikeDislikeDTO(StaticValueProvider.LOGIN_BLOGGER_URI, "/like/post?access_token=" + token.provideAccessToken(), likeAndDislikeDTO);
+		ApiExposeAndConsume.exposeLikeDislikeDTO(StaticValueProvider.LOGIN_BLOGGER_URI, "/like/post?access_token=" + token.provideAccessToken(), likeAndDislikeDTO);
 		
 		
+	}
+
+	public void commentBloggerPost(CommentDTO commentDTO) {
+		BlogDTO blogDTO = new BlogDTO();
+		blogDTO.setBlogId(commentDTO.getBlogId());
+		UsersDTO user = findUserInfosByUserName(LoginUserCredentialsProvider.provideUsername());
+		commentDTO.setBlog(blogDTO);
+		commentDTO.setUsers(user);
+		commentDTO.setCommentId(null);
+		ApiExposeAndConsume.exposeCommentDTO(StaticValueProvider.LOGIN_BLOGGER_URI, "/comment/post?access_token="+token.provideAccessToken(), commentDTO);
+	}
+
+	public List<BlogDTO> bloggerOwnPost() {
+		UsersDTO user = findUserInfosByUserName(LoginUserCredentialsProvider.provideUsername());
+		return findBloggerAllPost().stream().filter(blog -> blog.getUsers().getUserId() == user.getUserId()).collect(Collectors.toList());
 	}
 
 

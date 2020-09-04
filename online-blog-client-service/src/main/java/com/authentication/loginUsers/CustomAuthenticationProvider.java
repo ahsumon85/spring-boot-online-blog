@@ -18,7 +18,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.client.RestTemplate;
 
-import com.authentication.common.ApiConsume;
+import com.authentication.common.ApiExposeAndConsume;
 import com.authentication.common.StaticValueProvider;
 import com.authentication.user.model.UserRolesDTO;
 
@@ -63,7 +63,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 
 	public List<UserRolesDTO> findLoginUserRoles(String username, String accessToken) {
-		List<UserRolesDTO> userRolesDTOs = ApiConsume.consumeLoginUserRoles(StaticValueProvider.LOGIN_USER_URI,
+		List<UserRolesDTO> userRolesDTOs = ApiExposeAndConsume.consumeLoginUserRoles(StaticValueProvider.LOGIN_USER_URI,
 				"/roles?username=" + username + "&access_token=" + accessToken);
 		return userRolesDTOs;
 

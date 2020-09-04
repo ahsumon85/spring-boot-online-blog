@@ -13,14 +13,14 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 import com.authentication.user.model.BlogDTO;
+import com.authentication.user.model.CommentDTO;
 import com.authentication.user.model.LikeAndDislikeDTO;
 import com.authentication.user.model.UserRolesDTO;
 import com.authentication.user.model.UsersDTO;
-import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
-public class ApiConsume {
+public class ApiExposeAndConsume {
 
 	public static List<UserRolesDTO> consumeLoginUserRoles(String uri, String uriExtension) {
 		RestTemplate template = new RestTemplate();
@@ -96,5 +96,12 @@ public class ApiConsume {
 		String url = StaticValueProvider.BASE_URL + uri + uriExtension;
 		restTemplate.exchange(url, HttpMethod.PATCH, request, Void.class);
 
+	}
+
+	public static void exposeCommentDTO(String uri, String uriExtension, CommentDTO commentDTO) {
+		RestTemplate template = new RestTemplate();
+		HttpEntity<CommentDTO> request = new HttpEntity<>(commentDTO);
+		String url = StaticValueProvider.BASE_URL + uri + uriExtension;
+		template.exchange(url, HttpMethod.POST, request, CommentDTO.class);
 	}
 }

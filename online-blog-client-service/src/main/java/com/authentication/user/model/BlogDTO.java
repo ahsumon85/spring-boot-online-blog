@@ -19,6 +19,8 @@ public class BlogDTO {
 	private List<CommentDTO> bloggerComment;
 
 	private UsersDTO users;
+	
+	private String userAndDate;
 
 	public Long getBlogId() {
 		return blogId;
@@ -82,6 +84,14 @@ public class BlogDTO {
 
 	public void setUsers(UsersDTO users) {
 		this.users = users;
+	}
+
+	public String getUserAndDate() {
+		return userAndDate;
+	}
+
+	public void setUserAndDate(String userAndDate) {
+		this.userAndDate = userAndDate;
 	}
 
 }

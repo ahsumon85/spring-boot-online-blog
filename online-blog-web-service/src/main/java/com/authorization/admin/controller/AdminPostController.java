@@ -55,7 +55,7 @@ public class AdminPostController {
 		return new ResponseEntity<List<BlogDTO>>(list, HttpStatus.OK);
 	}
 
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('ROLE_BLOGGER')")
 	@DeleteMapping(value = "/delete")
 	public ResponseEntity<BaseResponse> deleteBlogPostByBlogId(@Valid @NotNull(message = "blogId must not be null") @RequestParam Long blogId) {
 		BaseResponse response = amAdminPostService.deleteBlogPostByBlogId(blogId);

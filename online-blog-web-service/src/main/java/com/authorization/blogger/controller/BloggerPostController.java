@@ -47,7 +47,7 @@ public class BloggerPostController {
 		return new ResponseEntity<>(response, HttpStatus.CREATED);
 	}
 	
-	@PreAuthorize("hasRole('ROLE_BLOGGER')")
+	@PreAuthorize("hasRole('ROLE_BLOGGER') or hasRole('ROLE_ADMIN')")
 	@PostMapping("/comment/post")
 	public ResponseEntity<BaseResponse> commentOtherBloggerPost(@Valid @RequestBody CommentDTO commentDTO) {
 		BaseResponse response = bloggerService.commentOtherApprovedPost(commentDTO);

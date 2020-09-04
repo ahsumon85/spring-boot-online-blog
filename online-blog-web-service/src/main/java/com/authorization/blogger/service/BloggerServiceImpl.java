@@ -163,6 +163,7 @@ public class BloggerServiceImpl implements BloggerService {
 		LikeAndDislike likeDislikeByBlogId = postLikeDislikeList.stream().filter(likeDislike -> likeDislike.getBlog().getBlogId() == blog.getBlogId()).findFirst().orElse(null);
 		BeanUtils.copyProperties(blog, blogDTO);
 		BeanUtils.copyProperties(blog.getUsers(), usersDTO);
+		usersDTO.setUserId(blog.getUsers().getId());
 		if(likeDislikeByBlogId == null) {
 			likeAndDislikeDTO = new LikeAndDislikeDTO();
 		}else {
@@ -176,6 +177,7 @@ public class BloggerServiceImpl implements BloggerService {
 			CommentDTO commentDTO = new CommentDTO();
 			BeanUtils.copyProperties(comment, commentDTO);
 			commentDTO.setUsers(null);
+			commentDTO.setBlog(null);
 			return commentDTO;
 		}).collect(Collectors.toList());
 		

@@ -14,18 +14,21 @@ import org.springframework.web.servlet.ModelAndView;
 import com.authentication.loginUsers.LoginUserCredentialsProvider;
 import com.authentication.service.AdminAndBloggerService;
 import com.authentication.user.model.BlogDTO;
+import com.authentication.user.model.CommentDTO;
 import com.authentication.user.model.UsersDTO;
+
+import javassist.expr.NewArray;
 
 @Controller
 public class AdminAndBlogerController {
 
 	@Autowired
-	private AdminAndBloggerService userService;
+	private AdminAndBloggerService adminAndBloggerService;
 	
 	@GetMapping(value = "/admin/home")
 	public ModelAndView home() {
 		ModelAndView modelAndView = new ModelAndView();
-		UsersDTO user = userService.findUserInfosByUserName(LoginUserCredentialsProvider.provideUsername());
+		UsersDTO user = adminAndBloggerService.findUserInfosByUserName(LoginUserCredentialsProvider.provideUsername());
 		modelAndView.addObject("userName", "Welcome " + user.getUsername());
 		modelAndView.addObject("adminMessage", "Content Available Only for Users with Admin Role");
 		modelAndView.setViewName("admin/home");
@@ -43,9 +46,9 @@ public class AdminAndBlogerController {
 	@PostMapping(value = "/registration")
 	public ModelAndView signUpNewBlogger(@Valid @ModelAttribute("bloggerDTO") UsersDTO bloggerDTO) {
 		ModelAndView modelAndView = new ModelAndView();
-		UsersDTO user = userService.findUserInfosByUserName(bloggerDTO.getUsername());
+		UsersDTO user = adminAndBloggerService.findUserInfosByUserName(bloggerDTO.getUsername());
 		if (user == null) {
-			userService.signUpNewBlogger(bloggerDTO);
+			adminAndBloggerService.signUpNewBlogger(bloggerDTO);
 			modelAndView.addObject("user", new UsersDTO());
 			modelAndView.setViewName("login");
 		} else {
@@ -66,9 +69,9 @@ public class AdminAndBlogerController {
 	@PostMapping(value = "/create/admin")
 	public ModelAndView signUpNewAdmin(@Valid @ModelAttribute("adminDTO") UsersDTO adminDTO) {
 		ModelAndView modelAndView = new ModelAndView();
-		UsersDTO user = userService.findUserInfosByUserName(adminDTO.getUsername());
+		UsersDTO user = adminAndBloggerService.findUserInfosByUserName(adminDTO.getUsername());
 		if (user == null) {
-			userService.signUpNewAdmin(adminDTO);
+			adminAndBloggerService.signUpNewAdmin(adminDTO);
 		} else {
 			modelAndView.addObject("message", "Sorry ! you are already registered user");
 		}
@@ -79,16 +82,16 @@ public class AdminAndBlogerController {
 	@GetMapping(value = "/pending/users")
 	public ModelAndView findAllPendingUsers() {
 		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.addObject("userInfos", userService.findAllPendingUsers());
+		modelAndView.addObject("userInfos", adminAndBloggerService.findAllPendingUsers());
 		modelAndView.setViewName("pending-blogger");
 		return modelAndView;
 	}
 
 	@GetMapping(value = "/approved/user")
 	public ModelAndView approvedFendingUser(@NotNull @RequestParam Long userId) {
-		userService.approvedFendingUser(userId);
+		adminAndBloggerService.approvedFendingUser(userId);
 		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.addObject("userInfos", userService.findAllPendingUsers());
+		modelAndView.addObject("userInfos", adminAndBloggerService.findAllPendingUsers());
 		modelAndView.setViewName("pending-blogger");
 		return modelAndView;
 	}
@@ -96,17 +99,26 @@ public class AdminAndBlogerController {
 	@GetMapping(value = "/active/users")
 	public ModelAndView findAllApprovedUsers() {
 		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.addObject("approvedUsers", userService.findAllApprovedUsers());
+		modelAndView.addObject("approvedUsers", adminAndBloggerService.findAllApprovedUsers());
 		modelAndView.setViewName("approved-blogger");
 		return modelAndView;
 	}
 	
 	@GetMapping(value = "/deactivate/users")
 	public ModelAndView deactivateApprovedUser(@NotNull @RequestParam Long userId) {
-		userService.deactivateApprovedUser(userId);
+		adminAndBloggerService.deactivateApprovedUser(userId);
 		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.addObject("approvedUsers", userService.findAllApprovedUsers());
+		modelAndView.addObject("approvedUsers", adminAndBloggerService.findAllApprovedUsers());
 		modelAndView.setViewName("approved-blogger");
+		return modelAndView;
+	}
+	
+	@GetMapping(value = "/blogger/own/post")
+	public ModelAndView bloggerOwnPost() {
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.addObject("commentOwnDTO", new CommentDTO());
+		modelAndView.addObject("blogOwnDTOs", adminAndBloggerService.bloggerOwnPost());
+		modelAndView.setViewName("blogger-own-post");
 		return modelAndView;
 	}
 	
@@ -114,7 +126,8 @@ public class AdminAndBlogerController {
 	public ModelAndView findBloggerAllPost() {
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.addObject("blogPostDTO", new BlogDTO());
-		modelAndView.addObject("blogDTOs", userService.findBloggerAllPost());
+		modelAndView.addObject("commentDTO", new CommentDTO());
+		modelAndView.addObject("blogDTOs", adminAndBloggerService.findBloggerAllPost());
 		modelAndView.setViewName("blogger-post");
 		return modelAndView;
 	}
@@ -122,14 +135,28 @@ public class AdminAndBlogerController {
 	
 	@PostMapping(value = "/blog/post")
 	public String postBloggerContent(@Valid @ModelAttribute("blogPostDTO") BlogDTO blogPostDTO) {
-		userService.postBloggerContent(blogPostDTO);
+		adminAndBloggerService.postBloggerContent(blogPostDTO);
 		return "redirect:/blogger/post";
 	}
 	
+	@PostMapping(value = "/comment/post")
+	public String commentBloggerPost(@Valid @ModelAttribute("commentDTO") CommentDTO commentDTO) {
+		adminAndBloggerService.commentBloggerPost(commentDTO);
+		return "redirect:/blogger/post";
+	}
+	
+	@PostMapping(value = "/comment/own/post")
+	public String commentBloggerOwnPost(@Valid @ModelAttribute("commentOwnDTO") CommentDTO commentOwnDTO) {
+		adminAndBloggerService.commentBloggerPost(commentOwnDTO);
+		return "redirect:/blogger/own/post";
+	}
+	
+	
+
 	@GetMapping(value = "/pending/post")
 	public ModelAndView findAllBloggerPendingPost() {
 		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.addObject("pendingBlogInfos", userService.findAllBloggerPendingPost());
+		modelAndView.addObject("pendingBlogInfos", adminAndBloggerService.findAllBloggerPendingPost());
 		modelAndView.setViewName("pending-post");
 		return modelAndView;
 	}
@@ -137,25 +164,31 @@ public class AdminAndBlogerController {
 	
 	@GetMapping(value = "/approved/post")
 	public String approvedPostByAdmin(@Valid @RequestParam Long blogId) {
-		userService.approvedPostByAdmin(blogId);
+		adminAndBloggerService.approvedPostByAdmin(blogId);
 		return "redirect:/pending/post";
 	}
 	
 	@GetMapping(value = "/delete/blogger/post")
 	public String deleteOtherBloggerPost(@NotNull @RequestParam Long blogId) {
-		userService.deleteOtherBloggerPost(blogId);
+		adminAndBloggerService.deleteOtherBloggerPost(blogId);
 		return "redirect:/blogger/post";
+	}
+	
+	@GetMapping(value = "/delete/own/post")
+	public String deleteOwnBloggerPost(@NotNull @RequestParam Long blogId) {
+		adminAndBloggerService.deleteOtherBloggerPost(blogId);
+		return "redirect:/blogger/own/post";
 	}
 	
 	@GetMapping(value = "/like/blogger/post")
 	public String likeBloggerPost(@NotNull @RequestParam Long blogId) {
-		userService.likeBloggerPost(blogId);
+		adminAndBloggerService.likeBloggerPost(blogId);
 		return "redirect:/blogger/post";
 	}
 	
 	@GetMapping(value = "/dislike/blogger/post")
 	public String dislikeBloggerPost(@NotNull @RequestParam Long blogId) {
-		userService.dislikeBloggerPost(blogId);
+		adminAndBloggerService.dislikeBloggerPost(blogId);
 		return "redirect:/blogger/post";
 	}
 
